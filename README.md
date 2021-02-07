@@ -1,1 +1,1 @@
-# IRCRAT
+# Remote Access Tool over IRC
