@@ -8,7 +8,21 @@ class IRC:
     def __init__(self):
         self.server = 'irc.esper.net'
         self.port = 6667
-        self.name = 'randomname987654'
+        self.name = 'random_name000000'
+        self.buffer = ''
+    
+    def get_raw(self):
+        if self.buffer != '':
+            line, self.buffer = self.buffer.split('\r\n', 1)
+            prefix, command, args = '', '', ''
+            if line[0] == ':':
+                prefix, line = line[1:].split(' ', 1)
+            if line.find(' :') != -1:
+                args, line = line.split(' :', 1)
+                args = args.split()
+            return prefix, args, line
+        else:
+            return None
     
     def send_raw(self, message):
         self.socket.send(bytes(message + '\r\n', 'UTF-8'))
@@ -30,7 +44,7 @@ class IRC:
         self.send_raw('QUIT')
         self.online = False
         time.sleep(0.5)
-        self.socket.shutdown()
+        self.socket.close()
         self.recvThread.join()
     
     def response(self):
@@ -40,8 +54,9 @@ class IRC:
                 resp = self.socket.recv(512).decode('UTF-8')
                 if resp.find('PING') != -1:
                     self.send_raw('PONG ' + resp.split()[1])
-                print(resp) # debug
+                self.buffer += resp
             except OSError:
+                time.sleep(3)
                 self.connect()
             else:
                 pass
