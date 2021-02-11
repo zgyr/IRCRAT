@@ -1,7 +1,7 @@
 import threading
 import socket
 import time
-import sys
+import os
 
 class IRC:
     
@@ -12,17 +12,15 @@ class IRC:
         self.buffer = ''
     
     def get_raw(self):
+        prefix, args, line = '', [], ''
         if self.buffer != '':
             line, self.buffer = self.buffer.split('\r\n', 1)
-            prefix, command, args = '', '', ''
             if line[0] == ':':
                 prefix, line = line[1:].split(' ', 1)
             if line.find(' :') != -1:
                 args, line = line.split(' :', 1)
                 args = args.split()
-            return prefix, args, line
-        else:
-            return None
+        return prefix, args, line
     
     def send_raw(self, message):
         self.socket.send(bytes(message + '\r\n', 'UTF-8'))
@@ -58,5 +56,18 @@ class IRC:
             except OSError:
                 time.sleep(3)
                 self.connect()
-            else:
+            except:
                 pass
+
+if __name__ == '__main__':
+    irc = IRC()
+    irc.connect()
+    while True:
+        try:
+            time.sleep(0.1)
+            prefix, args, line = irc.get_raw()
+            if line != '':
+                print(prefix, line)
+        except KeyboardInterrupt:
+            irc.disconnect()
+            os.exit()
