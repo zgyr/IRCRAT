@@ -69,7 +69,15 @@ if __name__ == '__main__':
             time.sleep(0.1)
             prefix, args, line = irc.get_raw()
             if line != '':
-                print(prefix, line)
+                print(prefix, line) # debug
+                if len(args) != 0:
+                    if args[0] == 'PRIVMSG':
+                        name = prefix.split('!')[0]
+                        if line == 'ls':
+                            irc.send(name, filemanager.list())
+                        elif line == 'pwd':
+                            irc.send(name, filemanager.pwd())
+                    
         except KeyboardInterrupt:
             irc.disconnect()
             os.exit()
