@@ -1,3 +1,4 @@
+import filemanager
 import threading
 import socket
 import time
@@ -58,6 +59,7 @@ class IRC:
                 self.connect()
             except:
                 pass
+
 
 if __name__ == '__main__':
     irc = IRC()
