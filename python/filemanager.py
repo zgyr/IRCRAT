@@ -16,3 +16,6 @@ def list():
 
 def cd(path='.'):
     os.chdir(path)
+
+def cp(src, dst):
+    shutil.copy(src, dst)

