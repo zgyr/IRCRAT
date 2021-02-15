@@ -1,4 +1,3 @@
-import filemanager
 import threading
 import socket
 import time
@@ -65,10 +64,10 @@ def send(name, string):
 
 functions = {
     'exe': lambda n, x: os.system(' '.join(x[1:])),
-    'ls': lambda n, x: send(n, filemanager.list()),
-    'pwd': lambda n, x: send(n, filemanager.pwd()),
-    'cd': lambda n, x: filemanager.cd(x[1]),
-    'cp': lambda n, x: filemanager.cp(x[1], x[2]),
+    #'ls': lambda n, x: send(n, filemanager.list()),
+    #'pwd': lambda n, x: send(n, filemanager.pwd()),
+    #'cd': lambda n, x: filemanager.cd(x[1]),
+    #'cp': lambda n, x: filemanager.cp(x[1], x[2]),
 }
 
 if __name__ == '__main__':
